@@ -275,6 +275,7 @@ int main(){
 			fprintf(stderr, "Impossible to read %s image\n", files[i]);
 			continue;
 		}
+
 		/* resizes of each image */
 		out_resized_img = resize_image(in_img, 640);
   		if (out_resized_img == NULL) {
