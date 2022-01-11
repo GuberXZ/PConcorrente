@@ -7,12 +7,12 @@ import time as t
 import csv
 #ssh ist189792@sigma
 
-path = 'small'
+path = 'Project\small'
 t_number = 4
 
 new_width = 640
 size = 200
-watermark = i.open('watermark.png')
+watermark = i.open('Project\watermark.png')
 
 Tt=[[],[]]
 Ti=[[],[]]
@@ -45,18 +45,18 @@ def water(im, watermark):
 
 
 def full_transform(image_list, new_width, size, watermark):
-    Tt[0].append(t.time())
+    Tt[0].append(t.time_ns())
     for im in image_list:
-        Ti[0].append(t.time())
+        Ti[0].append(t.time_ns())
         resize(im, new_width)
         thumb(im, size)
         water(im, watermark)
-        Ti[1].append(t.time())
-    Tt[1].append(t.time())
+        Ti[1].append(t.time_ns())
+    Tt[1].append(t.time_ns())
 
 
 def main(dir, n):
-    epoch=t.time()
+    epoch=t.time_ns()
 
     # Serial #
     with open(f'{path}/img-process-list.txt') as ipl:
@@ -73,15 +73,19 @@ def main(dir, n):
     [th.start() for th in thread_list]
     [th.join() for th in thread_list]
 
-    end_epoch=t.time()
+    end_epoch=t.time_ns()
 
-    with open('estatisticas.csv','w') as file:
+    with open('estatisticas.csv','w',newline='') as file:
         w=csv.writer(file)
         for th in range(len(Tt[0])):
-            w.writerow([f'Thread {th+1}',Tt[0][th],Tt[1][th],Tt[1][th]-Tt[0][th]])
-        for im in range(len(Ti[0])):
-            w.writerow([f'Imagem {im+1}',Ti[0][im],Ti[1][im],Ti[1][im]-Ti[0][im]])
+            w.writerow([f'Thread_{th+1}',Tt[0][th],Tt[1][th],Tt[1][th]-Tt[0][th]])
+        for n,im in enumerate(all_images):
+            name=im.filename.split('/')[1]
+            w.writerow([f'Imagem_{name}',Ti[0][n],Ti[1][n],Ti[1][n]-Ti[0][n]])
         w.writerow(['Total',epoch,end_epoch,end_epoch-epoch])
 
 if __name__ == '__main__':
+
     main(path, t_number)
+
+ 
